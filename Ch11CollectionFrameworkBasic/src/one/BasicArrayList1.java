@@ -20,18 +20,18 @@ public class BasicArrayList1 {
 		arrayList.add(3);
 		arrayList.add(4);
 		arrayList.add(5);
-		arrayList.add(6);
-		arrayList.add(7);
-		arrayList.add(8);
-		arrayList.add(9);
-		arrayList.add(10);
-		arrayList.add(11);
-		arrayList.add(12);
-		arrayList.add(13);
+		arrayList.add(5);
+		arrayList.add(1);
+		arrayList.add(999);
 		
-		for (int i = 0; i < 13; i++) {
-			System.out.print(arrayList.get(i) + ", ");
-		}
+		
+		for (int i = 0; i < arrayList.size(); i++) {
+	         System.out.println((int)arrayList.get(i) + 100);
+	    }
+		
+//		for (int i = 0; i < 13; i++) {
+//			System.out.print(arrayList.get(i) + ", ");
+//		}
 		
 		int num = 0; 
 		
@@ -41,10 +41,16 @@ public class BasicArrayList1 {
 //		num = (int) arrayList.get(4);
 //		System.out.println(num);
 		
-//		for (int i = 0; i < 10; i++) {
-//			System.out.println(arrayList.get(i));
-//		}
+//		***어레이리스트는 배열의 크기가 가변한다***
+		for (int i = 0; i < 7; i++) {
+			System.out.println(arrayList.get(i));
+		}
 		
+		System.out.println("=========================");
+		
+		for (int i = 0; i < arrayList.size(); i++) {
+			System.out.println(arrayList.get(i));
+		}
 		
 	}
 
