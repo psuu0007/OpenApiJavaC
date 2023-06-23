@@ -8,6 +8,7 @@ public class BasicMap4 {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
+		
 //		회원가입 할 때 어떤 정보가 필요하지?
 //		3개의 정보를 User 클래스에 만든다		
 		
