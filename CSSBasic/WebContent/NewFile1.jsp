@@ -9,6 +9,12 @@
 </head>
 
 <body>
-	
+	<ol>
+		<li id='id_first' class='cl_first'>first</li> 검정, 노란 글씨
+		<li id='id_second' class='cl_second'>second</li>검정, 핑크 글씨
+		<li id='id_third' class='cl_third'>third</li>검정, 블루 글씨
+		<li id='id_fourth' class='cl_fourth'   4. 까지는 검정
+			style="background-color: white">fourth</li>화이트, 핑크 글씨
+	</ol>
 </body>
 </html>
