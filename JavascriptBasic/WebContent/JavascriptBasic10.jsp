@@ -15,6 +15,7 @@
 </body>
 
 <script type="text/javascript">
+// 	배열 선언법1
 	var nameArr = [1, 2, 3, 4, 10, 'sad'];
 	
 	for (var i = 0; i < nameArr.length; i++) {
