@@ -3,10 +3,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Insert title here</title>
+<title>GlobalLocalTest1</title>
 <script type="text/javascript">
+
 	var globalNum = 10;
 	globalNum2 = 20;
+	var test = '전역 변수는 과연 선언하기 전에 사용할 수 있을가?';
+	alert(test);
 	
 	function numbering() {
 		globalNum3 = 30;
@@ -23,7 +26,23 @@
 </script>
 
 </head>
+
 <body>
 
+
 </body>
+
+<script type="text/javascript">
+	numbering();
+	
+	
+	
+	function numberingOtherFnc() {
+		document.write('와 아무대서나 선언하면 위아래 상관없네' + "<br>");
+		
+	}
+	
+	numberingOtherFnc();
+</script>
+
 </html>
