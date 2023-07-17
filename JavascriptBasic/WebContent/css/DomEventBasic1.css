@@ -1,0 +1,12 @@
+@charset "UTF-8";
+
+
+p{
+	background-color: black;
+	color: white;
+	
+}
+
+#linkMethod{
+	border: 1px solid red;
+}
