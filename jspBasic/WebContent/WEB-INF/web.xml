@@ -31,7 +31,15 @@
 		<servlet-name>MemberUpdateServlet</servlet-name>
 		<url-pattern>/member/update</url-pattern>
 	</servlet-mapping>
-
+	
+	<servlet>
+		<servlet-name>MemberDeleteServlet</servlet-name>
+		<servlet-class>spms.servlets.MemberDeleteServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MemberDeleteServlet</servlet-name>
+		<url-pattern>/member/delete</url-pattern>
+	</servlet-mapping>
 
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>

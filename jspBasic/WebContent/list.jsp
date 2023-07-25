@@ -1,29 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<!DOCTYPE html>
+	pageEncoding="UTF-8"%>
+
 <html>
 <head>
-	<meta charset="UTF-8">
-	<title>Insert title here</title>
-	
-	<script type="text/javascript">
-		
-	</script>
+<title>회원목록</title>
 </head>
-
 <body>
-	
+	<h1>회원목록</h1>
 	<p>
-		<a href="./add">
-			신규 회원
-		</a>
+		<a href='./add'>신규 회원</a>
 	</p>
-	
-	
-	<a href='./update'>
-		상세 페이지
-	</a>
-	
+	21, <a href='./update?mNo=21'>ㅋㅋ</a>, zz@com, 2023-07-24
+	, <a href='./delete?=mNo=21'>삭제</a>
+	 
 	
 </body>
 </html>
