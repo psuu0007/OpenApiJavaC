@@ -11,10 +11,12 @@ import java.util.Date;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@WebServlet("/member/update")
 public class MemberUpdateServlet extends HttpServlet{
 
 	@Override
@@ -83,6 +85,10 @@ public class MemberUpdateServlet extends HttpServlet{
 			htmlStr += "'><br>";
 			htmlStr += "가입일: " + creDate + "<br>";
 			htmlStr += "<input type='submit' value='저장'>";
+			
+			htmlStr += "<input type='button' value='삭제' "
+					+ "onclick='location.href=\"./delete?mNo="+ mNo +"\"'>";
+			
 			htmlStr += "<input type='button' value='취소' "
 					+ "onclick='location.href=\"./list\"'>";
 			htmlStr += "</form>";
@@ -129,7 +135,7 @@ public class MemberUpdateServlet extends HttpServlet{
 	protected void doPost(HttpServletRequest req
 		, HttpServletResponse res) throws ServletException, IOException {
 		
-		req.setCharacterEncoding("UTF-8");
+//		req.setCharacterEncoding("UTF-8");
 		
 		Connection conn = null;
 		PreparedStatement pstmt = null;

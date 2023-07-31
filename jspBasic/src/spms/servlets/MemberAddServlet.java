@@ -7,11 +7,15 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.eclipse.jdt.internal.compiler.ast.ThrowStatement;
 
 
 @WebServlet("/member/add")
@@ -49,6 +53,7 @@ public class MemberAddServlet extends HttpServlet {
 		htmlStr += "</html>";
 		
 		out.println(htmlStr);
+		
 	}
 
 	// 데이터베이스에 데이터 추가, 회원정보 저장
@@ -60,14 +65,17 @@ public class MemberAddServlet extends HttpServlet {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String user = "ezen";
-		String password = "ezen12";
+		ServletContext sc = getServletContext();
+
+		String driver = sc.getInitParameter("driver");
+		String url = sc.getInitParameter("url");
+		String user = sc.getInitParameter("user");
+		String password = sc.getInitParameter("password");
 		
 		// 서블릿에서 getParameter를 호출하면 기본적으로 ISO-8859 어쩌고로
 //		인코딩된다 그런데 클라이언트가 보낸 문자를 영어라고 간주하고 유니코드로 변경하기 때문에 한글 깨짐
 //		영어는 1, 한글은 3byte이다
-		req.setCharacterEncoding("UTF-8");
+//		req.setCharacterEncoding("UTF-8");
 		
 		// 입력 매개변수의 값 가져오기
 		String emailStr = req.getParameter("email");
@@ -75,10 +83,9 @@ public class MemberAddServlet extends HttpServlet {
 		String nameStr = req.getParameter("name");
 		
 		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Class.forName(driver);
 			
-			conn = 
-					DriverManager.getConnection(url, user, password);
+			conn = DriverManager.getConnection(url, user, password);
 			
 			String sql = "";
 			
@@ -122,6 +129,8 @@ public class MemberAddServlet extends HttpServlet {
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
+	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

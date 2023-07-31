@@ -1,113 +1,126 @@
 package spms.servlets;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Date;
 
-import javax.servlet.GenericServlet;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import spms.dto.MemberDto;
 
 @WebServlet("/member/list")
-public class MemberListServlet extends GenericServlet{
+public class MemberListServlet extends HttpServlet{
 
+	private static final long serialVersionUID = 1L;
+	
 	@Override
-	public void service(ServletRequest req, 
-		ServletResponse res) 
+	public void doGet(HttpServletRequest request, 
+			HttpServletResponse response) 
 		throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
-//		특정 데이터베이스와 연결정보를 가지는 인터페이스
 		Connection conn = null;
-//		SQL query문을 DB에 전송하는 방법이 정의된 인터페이스
-		Statement stmt = null;
-//		select 구문 실행 결과를 조회할 수 있는 인터페이스
+		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
-//		사용할 JDBC 드라이버/ 드라이버타입# 서버주소와 포트번호& db서비스 아이디
-//		jdbc:oracle/ thin# @localhost:1521& xe
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String user = "ezen";
-		String password = "ezen12";
+		String driver = ""; 
+		String url = "";
+		String user = "";
+		String password = "";
 		
 		try {
-			// 1.jdbc드라이버 로드 (객체 생성 같은 거임)
-			Class.forName("oracle.jdbc.driver.OracleDriver");
+			ServletContext sc = getServletContext();
 			
-//			2.데이터베이스 연결
-			conn = 
-				DriverManager.getConnection(url, user, password);
-//			상태? crud할수있는 sql객체
-//			3.statement 객체 생성
-			stmt = conn.createStatement();
+			driver = sc.getInitParameter("driver");
+			url = sc.getInitParameter("url");
+			user = sc.getInitParameter("user");
+			password = sc.getInitParameter("password");
+			
+			Class.forName(driver);
+			System.out.println("오라클 드라이버 로드 성공");
+
+			conn = DriverManager.getConnection(url, user, password);
+			System.out.println("오라클 드라이버 연결 성공");
 			
 			String sql = "SELECT MNO, MNAME, EMAIL, CRE_DATE"
 					+ " FROM MEMBERS"
 					+ " ORDER BY MNO DESC";
-			// 4.sql문 수행(전송)
-			// 5.sql문 결과 받기
-			rs = stmt.executeQuery(sql);
 			
-//			출력할 데이터의 인코딩 형식과 문자 집합을 지정한다
-			res.setContentType("text/html");
-			// 출력할 데이터의 문자 집합을 지정한다 -> 유니코드 값을 UTF-8로 데이터를 출력할 때 변환한다
-			res.setCharacterEncoding("UTF-8");
-			//클라이언트로 출력할 수 있도록 출력 스트림 객체를 반환한다
-			PrintWriter out = res.getWriter();
+			pstmt = conn.prepareStatement(sql);
 			
-			out.println("<html><head><title>회원목록</title></head>");
-			out.println("<body><h1>회원목록</h1>");
+			rs = pstmt.executeQuery();
+			System.out.println("쿼리 수행 성공");
 			
-			String htmlStr = "";
+			response.setContentType("text/html");
+			response.setCharacterEncoding("UTF-8");
 			
-			htmlStr += "<p>";
-			htmlStr += "<a href='./add'>";
-			htmlStr += "신규 회원";
-			htmlStr += "</a>";
-			htmlStr += "</p>";
+			ArrayList<MemberDto> memberList = new ArrayList<>();
 			
-			out.println(htmlStr);
+			//데이터베이스에서 회원정보를 가져오는 로직
+			int mno = 0;
+			String mname = "";
+			String email = "";
+			Date creDate = null;
 			
 			while(rs.next()) {
-				out.println(rs.getInt("MNO") + ", " + 
-							"<a href='./update?mNo=" + 
-							 	rs.getInt("MNO") +
-							"'>" +
-							rs.getString("MNAME") + "</a>, " +
-							rs.getString("EMAIL") + ", " +
-							rs.getDate("CRE_DATE") + ", " 
-							+ "<a href='./delete?mNo="+ rs.getInt("MNO") 
-							+ "'>[삭제]</a>" 
-							+ "<br>"
-				);
+				MemberDto memberDto = new MemberDto();
+				
+				mno = rs.getInt("MNO");
+				mname = rs.getString("MNAME");
+				email = rs.getString("EMAIL");
+				creDate = rs.getDate("CRE_DATE");
+				
+				memberDto.setNo(mno);
+				memberDto.setName(mname);
+				memberDto.setEmail(email);
+				memberDto.setCreateDate(creDate);
+				
+				memberList.add(memberDto);
 			}
-			out.println("</body></html>");
 			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			request.setAttribute("memberList", memberList);
+			
+			RequestDispatcher dispatcher = 
+				request.getRequestDispatcher("/member/MemberListView.jsp");
+			// 인클루딩
+			dispatcher.include(request, response);
+		} catch (Exception e) {
+			
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+//			throw new ServletException(e);
+			
+			request.setAttribute("error", e);
+			request.setAttribute("msg", "i'm sorry");
+			RequestDispatcher dispatcher 
+				= request.getRequestDispatcher("/Error.jsp");
+//			포워딩
+			dispatcher.forward(request, response);
 		}finally {
-//			6.자원 연결 해제 (메모리 회수)
 			if(rs != null) {
 				try {
 					rs.close();
+					System.out.println("ResultSet 종료");
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}
 			
-			if(stmt != null) {
+			if(pstmt != null) {
 				try {
-					stmt.close();
+					pstmt.close();
+					System.out.println("DB 쿼리 종료");
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -116,6 +129,7 @@ public class MemberListServlet extends GenericServlet{
 			if(conn != null) {
 				try {
 					conn.close();
+					System.out.println("DB 연결 종료");
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -123,6 +137,12 @@ public class MemberListServlet extends GenericServlet{
 			
 		} // 파이날 끝
 		
-	} // service 메서드 끝
+	} // doGet 메서드 끝
+	
+	@Override
+	protected void doPost(HttpServletRequest req
+		, HttpServletResponse res) throws ServletException, IOException {
+	
+	}
 	
 }

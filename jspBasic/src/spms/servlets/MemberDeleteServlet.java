@@ -8,17 +8,19 @@ import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@WebServlet("/member/delete")
 public class MemberDeleteServlet extends HttpServlet{
 
 	@Override
 	protected void doGet(HttpServletRequest req
 		, HttpServletResponse res) throws ServletException, IOException {
 		
-		req.setCharacterEncoding("UTF-8");
+//		req.setCharacterEncoding("UTF-8");
 		
 		Connection conn = null;
 		PreparedStatement pstmt = null;
