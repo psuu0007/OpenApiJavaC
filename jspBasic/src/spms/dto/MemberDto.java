@@ -2,6 +2,7 @@ package spms.dto;
 
 import java.util.Date;
 
+//Bean Spec
 public class MemberDto {
 
 	private int no;
@@ -13,6 +14,12 @@ public class MemberDto {
 	
 	public MemberDto() {
 		super();
+	}
+
+	public MemberDto(String name, String email) {
+		super();
+		this.name = name;
+		this.email = email;
 	}
 
 	public MemberDto(int no, String name, String email, String password

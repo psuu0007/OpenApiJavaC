@@ -34,24 +34,10 @@ public class MemberListServlet extends HttpServlet{
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
-		String driver = ""; 
-		String url = "";
-		String user = "";
-		String password = "";
-		
 		try {
-			ServletContext sc = getServletContext();
+			ServletContext sc = this.getServletContext();
 			
-			driver = sc.getInitParameter("driver");
-			url = sc.getInitParameter("url");
-			user = sc.getInitParameter("user");
-			password = sc.getInitParameter("password");
-			
-			Class.forName(driver);
-			System.out.println("오라클 드라이버 로드 성공");
-
-			conn = DriverManager.getConnection(url, user, password);
-			System.out.println("오라클 드라이버 연결 성공");
+			conn = (Connection) sc.getAttribute("conn");
 			
 			String sql = "SELECT MNO, MNAME, EMAIL, CRE_DATE"
 					+ " FROM MEMBERS"
@@ -121,15 +107,6 @@ public class MemberListServlet extends HttpServlet{
 				try {
 					pstmt.close();
 					System.out.println("DB 쿼리 종료");
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			if(conn != null) {
-				try {
-					conn.close();
-					System.out.println("DB 연결 종료");
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}

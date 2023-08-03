@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,26 +21,17 @@ public class MemberDeleteServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req
 		, HttpServletResponse res) throws ServletException, IOException {
 		
-//		req.setCharacterEncoding("UTF-8");
-		
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		
-		ServletContext sc = this.getServletContext();
-		
-		String driver = sc.getInitParameter("driver");
-		String url = sc.getInitParameter("url");
-		String user = sc.getInitParameter("user");
-		String password = sc.getInitParameter("password");
-		
-		String mNo = req.getParameter("mNo");
+		String mNo = req.getParameter("no");
 		
 		String sql = "";
 		
 		try {
-			Class.forName(driver);
+			ServletContext sc = this.getServletContext();
 			
-			conn = DriverManager.getConnection(url, user, password);
+			conn = (Connection) sc.getAttribute("conn");
 			
 			sql = "DELETE FROM MEMBERS";
 			sql += " WHERE MNO = ?";
@@ -52,12 +44,15 @@ public class MemberDeleteServlet extends HttpServlet{
 			
 			res.sendRedirect("./list");
 			
-		} catch (ClassNotFoundException e) {
+		}catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			req.setAttribute("error", e);
+			RequestDispatcher rd = 
+					req.getRequestDispatcher("/Error.jsp");
+				
+			rd.forward(req, res);
 		}finally {
 			if(pstmt != null) {
 				try {
@@ -67,13 +62,6 @@ public class MemberDeleteServlet extends HttpServlet{
 				}
 			}
 			
-			if(conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
 		} // finally 종료
 		
 		

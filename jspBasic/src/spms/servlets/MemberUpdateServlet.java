@@ -9,12 +9,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import spms.dto.MemberDto;
 
 @WebServlet("/member/update")
 public class MemberUpdateServlet extends HttpServlet{
@@ -26,22 +29,18 @@ public class MemberUpdateServlet extends HttpServlet{
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
-		ServletContext sc = this.getServletContext();
-		
-		String driver = sc.getInitParameter("driver");
-		String url = sc.getInitParameter("url");
-		String user = sc.getInitParameter("user");
-		String password = sc.getInitParameter("password");
-		
-		int mNo = Integer.parseInt(req.getParameter("mNo"));
+		String mNo = "";
 		
 		String sql = "";
+		RequestDispatcher rd = null;
 		
 		try {
-			Class.forName(driver);
-			System.out.println("오라클 드라이버 로드");
+			mNo = req.getParameter("no");
+			int no = Integer.parseInt(mNo);
 			
-			conn = DriverManager.getConnection(url, user, password);
+			ServletContext sc = this.getServletContext();
+			
+			conn = (Connection) sc.getAttribute("conn");
 			
 			sql = "SELECT MNAME, EMAIL, CRE_DATE";
 			sql += " FROM MEMBERS";
@@ -49,7 +48,7 @@ public class MemberUpdateServlet extends HttpServlet{
 			
 			pstmt = conn.prepareStatement(sql);
 			
-			pstmt.setInt(1, mNo);
+			pstmt.setInt(1, no);
 			
 			rs = pstmt.executeQuery();
 			
@@ -57,52 +56,37 @@ public class MemberUpdateServlet extends HttpServlet{
 			String email = "";
 			Date creDate = null;
 			
-			while(rs.next()) {
+			MemberDto memberDto = new MemberDto();
+			
+			if(rs.next()) {
 				mName = rs.getString("MNAME");
 				email = rs.getString("EMAIL");
 				creDate = rs.getDate("CRE_DATE");
+				
+				memberDto.setNo(no);
+				memberDto.setName(mName);
+				memberDto.setEmail(email);
+				memberDto.setCreateDate(creDate);
+			}else {
+				throw new Exception("해당 번호의 회원을 찾을 수 없습니다.");
 			}
 			
-			res.setContentType("text/html");
-			res.setCharacterEncoding("UTF-8");
-			PrintWriter out = res.getWriter();
+			req.setAttribute("memberDto", memberDto);
 			
-			String htmlStr = "";
+			rd = req.getRequestDispatcher("./MemberUpdateForm.jsp");
+			rd.forward(req, res);
 			
-			htmlStr += "<!DOCTYPE html>";
-			htmlStr += "<html>";
-			htmlStr += "<head>";
-			htmlStr += "<title>회원정보</title>";
-			htmlStr += "</head>";
-			htmlStr += "<body>";
-			htmlStr += "<h1>회원정보 수정</h1>";
-			htmlStr += "<form action='./update' method='post'>";
-			htmlStr += "번호: <input type='text' name='mNo' value='" + mNo +"' ";
-			htmlStr	+= "readonly='readonly'><br>"; 
-			htmlStr += "이름: <input type='text' name='name' value='" + mName; 
-			htmlStr += "'><br>";
-			htmlStr += "이메일: <input type='text' name='email' value='" + email; 
-			htmlStr += "'><br>";
-			htmlStr += "가입일: " + creDate + "<br>";
-			htmlStr += "<input type='submit' value='저장'>";
-			
-			htmlStr += "<input type='button' value='삭제' "
-					+ "onclick='location.href=\"./delete?mNo="+ mNo +"\"'>";
-			
-			htmlStr += "<input type='button' value='취소' "
-					+ "onclick='location.href=\"./list\"'>";
-			htmlStr += "</form>";
-			htmlStr += "</body>";
-			htmlStr += "</html>";
-			
-			out.println(htmlStr);
-			System.out.println("수행 되나?");
-		} catch (ClassNotFoundException e) {
+		}catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
+			req.setAttribute("error", e);
+			rd = req.getRequestDispatcher("/Error.jsp");
+				
+			rd.forward(req, res);
 		}finally {
 			if(rs != null) {
 				try {
@@ -120,13 +104,6 @@ public class MemberUpdateServlet extends HttpServlet{
 				}
 			}
 			
-			if(conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
 		} //finally end
 		
 	} // doGet end
@@ -140,13 +117,6 @@ public class MemberUpdateServlet extends HttpServlet{
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		
-		ServletContext sc = this.getServletContext();
-		
-		String driver = sc.getInitParameter("driver");
-		String url = sc.getInitParameter("url");
-		String user = sc.getInitParameter("user");
-		String password = sc.getInitParameter("password");
-		
 		String email = req.getParameter("email");
 		String name = req.getParameter("name");
 		String mNo = req.getParameter("mNo");
@@ -154,9 +124,9 @@ public class MemberUpdateServlet extends HttpServlet{
 		String sql = "";
 		
 		try {
-			Class.forName(driver);
+			ServletContext sc = this.getServletContext();
 			
-			conn = DriverManager.getConnection(url, user, password);
+			conn = (Connection) sc.getAttribute("conn");
 			
 			sql = "UPDATE MEMBERS";
 			sql += " SET EMAIL = ?, MNAME = ?, MOD_DATE = SYSDATE";
@@ -172,24 +142,18 @@ public class MemberUpdateServlet extends HttpServlet{
 			
 			res.sendRedirect("./list");
 			
-		} catch (ClassNotFoundException e) {
+		}catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			req.setAttribute("error", e);
+			RequestDispatcher rd = req.getRequestDispatcher("/Error.jsp");
+				
+			rd.forward(req, res);
 		}finally {
 			if(pstmt != null) {
 				try {
 					pstmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			if(conn != null) {
-				try {
-					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
