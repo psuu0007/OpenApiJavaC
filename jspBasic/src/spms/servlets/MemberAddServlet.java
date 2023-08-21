@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jdt.internal.compiler.ast.ThrowStatement;
 
+import spms.dao.MemberDao;
+import spms.dto.MemberDto;
+
 
 @WebServlet("/member/add")
 public class MemberAddServlet extends HttpServlet {
@@ -37,32 +40,37 @@ public class MemberAddServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		Connection conn = null;
-		PreparedStatement pstmt = null;
+		
 		
 		// 입력 매개변수의 값 가져오기
-		String emailStr = req.getParameter("email");
-		String pwdStr = req.getParameter("password");
-		String nameStr = req.getParameter("name");
+		String email = req.getParameter("email");
+		String pwd = req.getParameter("password");
+		String name = req.getParameter("name");
 		
 		try {
+			MemberDto memberDto = new MemberDto();
+			
+			memberDto.setEmail(email);
+			memberDto.setPassword(pwd);
+			memberDto.setName(name);
+			
 			ServletContext sc = this.getServletContext();
 			
 			conn = (Connection) sc.getAttribute("conn");
 			
-			String sql = "";
+			MemberDao memberDao = new MemberDao();
 			
-			sql += "INSERT INTO MEMBERS";
-			sql += "(MNO, EMAIL, PWD, MNAME, CRE_DATE, MOD_DATE)";
-			sql += "VALUES(MEMBERS_MNO_SEQ.nextval, ?, ?, ?";
-			sql	+= ", SYSDATE, SYSDATE)";
+			memberDao.setConnection(conn);
 			
-			pstmt = conn.prepareStatement(sql);
+			int resultNum = 0;
 			
-			pstmt.setString(1, emailStr);
-			pstmt.setString(2, pwdStr);
-			pstmt.setString(3, nameStr);
+			resultNum = memberDao.memberInsert(memberDto);
 			
-			pstmt.executeUpdate();
+			if(resultNum == 0) {
+				System.out.println("회원가입 실패");
+			}else if(resultNum == 1) {
+				System.out.println("회원가입 성공");
+			}
 			
 			res.sendRedirect("./list");
 
@@ -75,16 +83,7 @@ public class MemberAddServlet extends HttpServlet {
 					req.getRequestDispatcher("/Error.jsp");
 				
 			rd.forward(req, res);
-		}finally {
-			if(pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			
-		} // finally 종료
+		}
 		
 	}
 

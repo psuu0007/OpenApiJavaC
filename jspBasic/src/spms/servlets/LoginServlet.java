@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import spms.dao.MemberDao;
 import spms.dto.MemberDto;
 
 @WebServlet(value = "/auth/login")
@@ -36,76 +37,43 @@ public class LoginServlet extends HttpServlet{
 		// TODO Auto-generated method stub
 		
 		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		
-		String email = req.getParameter("email");
-		String pwd = req.getParameter("password");
-		String name = "";
-		
-		String sql = "";
-		int colIndex = 1;
 		
 		try {
+			
+			String email = req.getParameter("email");
+			String pwd = req.getParameter("password");
+			
 			ServletContext sc = this.getServletContext();
 			
 			conn = (Connection) sc.getAttribute("conn");
 			
-			sql += "SELECT MNAME, EMAIL";
-			sql += " FROM MEMBERS";
-			sql += " WHERE EMAIL = ?";
-			sql += " AND PWD = ?";
+			MemberDao memberDao = new MemberDao();
+			memberDao.setConnection(conn);
 			
-			pstmt = conn.prepareStatement(sql);
+			MemberDto memberDto = memberDao.memberExist(email, pwd);
 			
-			pstmt.setString(colIndex++, email);
-			pstmt.setString(colIndex, pwd);
-			
-			rs = pstmt.executeQuery();
-			
-			if(rs.next()) {
-				email = rs.getString("email");
-				name = rs.getString("mname");
-				
-				MemberDto memberDto = new MemberDto(name, email);
-				
-				HttpSession session = req.getSession();
-				session.setAttribute("member", memberDto);
-				
-				res.sendRedirect("../member/list");
-			}else {
+			// 회원이 없다면 로그인 실패 페이지로 이동
+			if(memberDto == null) {
 				RequestDispatcher rd = 
 					req.getRequestDispatcher("./LoginFail.jsp");
-				
+					
 				rd.forward(req, res);
-//				rd.include(req, res);
-				
-//				res.sendRedirect("./LoginFail.jsp");
 			}
 			
-		} catch (SQLException e) {
+			// 회원이 존재한다면 세션에 담고 회원 전체 페이지로 이동
+			HttpSession session = req.getSession();
+			session.setAttribute("member", memberDto);
+			
+//			초단위
+//			session.setMaxInactiveInterval(10);
+			
+			res.sendRedirect("../member/list");
+			
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			try {
-				if(pstmt != null) {
-					pstmt.close();
-				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		} // finally 종료
+			throw new ServletException();
+		}
 		
 	}
 	

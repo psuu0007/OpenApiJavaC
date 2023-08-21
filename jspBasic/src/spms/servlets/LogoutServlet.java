@@ -18,7 +18,11 @@ public class LogoutServlet extends HttpServlet{
 		
 		HttpSession session = req.getSession();
 		
-		session.removeAttribute("memberDto");
+//		session.removeAttribute("member");
+//		int num = (int)session.getAttribute("123");
+		
+		session.invalidate();
+		
 		
 		res.sendRedirect("./login");
 		

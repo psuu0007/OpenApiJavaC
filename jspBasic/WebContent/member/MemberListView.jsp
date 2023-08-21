@@ -20,22 +20,16 @@
 		<a href='./add'>신규 회원</a>
 	</p>
 	
-<%-- 	<jsp:useBean  --%>
-<%-- 		id="memberList" --%>
-<%-- 		scope="request" --%>
-<%-- 		class="java.util.ArrayList" --%>
-<%--  		type="java.util.ArrayList<spms.dto.MemberDto>"  --%>
-<%-- 	/> --%>
 
 	<c:forEach var="memberDto" items="${memberList}">
 
-			${memberDto.no},
-			<a href='./update?no=${memberDto.no}'>
-				${memberDto.name}
-			</a>
-			, ${memberDto.email}
-			, ${memberDto.createDate},
-			<a href='./delete?no=${memberDto.no}'>[삭제]</a><br>
+		${memberDto.no},
+		<a href='./update?no=${memberDto.no}'>
+			${memberDto.name}
+		</a>
+		, ${memberDto.email}
+		, ${memberDto.createDate},
+		<a href='./delete?no=${memberDto.no}'>[삭제]</a><br>
 			
 	</c:forEach>
 	

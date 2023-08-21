@@ -1,2 +1,0 @@
-
-<!DOCTYPE html><html><head><title>회원정보</title></head><body><h1>회원정보 수정</h1><form action='./update' method='post'>번호: <input type='text' name='mNo' value='32' readonly='readonly'><br>이름: <input type='text' name='name' value='새친구'><br>이메일: <input type='text' name='email' value='new2'><br>가입일: 2023-07-31<br><input type='submit' value='저장'><input type='button' value='삭제' onclick='location.href="./delete?no=32"'><input type='button' value='취소' onclick='location.href="./list"'></form></body></html>
