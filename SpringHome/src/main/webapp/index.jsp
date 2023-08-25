@@ -7,6 +7,9 @@
 <title>Hello Spring</title>
 </head>
 <body>
-	Hello Spring Projects..
+	
+	<h1>Hello Spring Projects..</h1>
+	
+	
 </body>
 </html>

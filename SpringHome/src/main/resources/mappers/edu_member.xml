@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.edu.member">
+	
+	<resultMap type="memberDto" id="memberResultMap">
+		<id column="MNO" property="no" />
+		<result column="MNAME" property="name" />
+		<result column="EMAIL" property="email" />
+		<result column="PWD" property="password" />
+		<result column="CRE_DATE" property="createDate"
+			javaType="java.util.Date" />
+		<result column="MOD_DATE" property="modifyDate" 
+			javaType="java.util.Date" />
+	</resultMap>
+	
+	<select id="memberSelectList" resultMap="memberResultMap">
+		SELECT MNO, MNAME, EMAIL, CRE_DATE
+		FROM MEMBER
+		ORDER BY MNO DESC
+	</select>
+
+
+	<select id="memberExist" parameterType="map" 
+		resultMap="memberResultMap">
+		SELECT MNAME, EMAIL
+		FROM MEMBER
+		WHERE EMAIL = #{email} AND PWD = #{pwd}
+	</select>
+	
+	<insert id="memberInsertOne" parameterType="memberDto">
+		INSERT INTO MEMBER
+		(MNO, EMAIL, PWD, MNAME, CRE_DATE, MOD_DATE)
+		VALUES(MEMBERS_MNO_SEQ.nextval, #{email}, #{password}, #{name}, SYSDATE, SYSDATE)
+	</insert>
+	
+</mapper>
