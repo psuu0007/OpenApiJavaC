@@ -35,4 +35,24 @@
 		VALUES(MEMBERS_MNO_SEQ.nextval, #{email}, #{password}, #{name}, SYSDATE, SYSDATE)
 	</insert>
 	
+	<select id="memberSelectOne" parameterType="int"
+		 resultMap="memberResultMap">
+		SELECT 	MNO, MNAME, EMAIL, CRE_DATE
+		FROM 	MEMBER
+		WHERE 	MNO = #{no}
+	</select>
+	
+	<update id="memberUpdateOne" parameterType="memberDto">
+		UPDATE MEMBER
+		SET MNAME = #{name}, EMAIL = #{email}
+			, MOD_DATE = SYSDATE
+		WHERE MNO = #{no}
+	</update>
+
+	<delete id="memberDeleteOne" parameterType="int">
+		DELETE FROM MEMBER
+		WHERE MNO = #{value}
+	</delete>
+
+
 </mapper>

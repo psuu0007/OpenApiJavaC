@@ -95,5 +95,38 @@ public class MemberController {
 		return "redirect:/member/list.do";
 	}
 	
+	// 회원수정 화면으로
+	@RequestMapping(value = "/member/update.do", method = RequestMethod.GET)
+	public String memberUpdate(int no, Model model) {
+		log.info("Welcome MemberController memberUpdate! " + no);
+
+		MemberDto memberDto = memberService.memberSelectOne(no);
+
+		model.addAttribute("memberDto", memberDto);
+		
+		return "member/MemberUpdateForm";
+	}
+	
+	//회원수정
+	@RequestMapping(value = "/member/updateCtr.do", method = RequestMethod.POST)
+	public String memberUpdateCtr(MemberDto memberDto, Model model) {
+		log.info("Welcome MemberController memberUpdateCtr! " + memberDto);
+
+		memberService.memberUpdateOne(memberDto);
+		
+		
+		return "redirect:/member/list.do";
+	}
+	
+	//회원수정
+	@RequestMapping(value = "/member/delete.do", method = RequestMethod.GET)
+	public String memberDelete(int no, Model model) {
+		log.info("Welcome MemberController memberDelete! " + no);
+
+		memberService.memberDeleteOne(no);
+		
+		
+		return "redirect:/member/list.do";
+	}
 	
 }
