@@ -30,7 +30,7 @@
 		</a>
 		, ${memberDto.email}		
 		, <fmt:formatDate pattern="yyyy-MM-dd hh:mm" value="${memberDto.createDate}"/>
-		<a href='./delete?no=${memberDto.no}'>[삭제]</a><br>
+		<a href='./delete.do?no=${memberDto.no}'>[삭제]</a><br>
 			
 	</c:forEach>
 	
