@@ -68,7 +68,12 @@ public class MemberController {
 		// Log4j 
 		log.info("Welcome MemberController list!");
 			
-		List<MemberDto> memberList = memberService.memberSelectList();
+		int totalCount = memberService.memberSelectTotalCount();
+		
+		int start = 0;
+		int end = 0;
+		
+		List<MemberDto> memberList = memberService.memberSelectList(start, end);
 		
 		model.addAttribute("memberList", memberList);
 		
@@ -111,7 +116,9 @@ public class MemberController {
 	@RequestMapping(value = "/member/updateCtr.do", method = RequestMethod.POST)
 	public String memberUpdateCtr(MemberDto memberDto, Model model) {
 		log.info("Welcome MemberController memberUpdateCtr! " + memberDto);
-
+		
+		
+				
 		memberService.memberUpdateOne(memberDto);
 		
 		

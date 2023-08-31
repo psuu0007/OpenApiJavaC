@@ -15,10 +15,10 @@ public class MemberServiceImpl implements MemberService{
 	public MemberDao memberDao;
 	
 	@Override
-	public List<MemberDto> memberSelectList() {
+	public List<MemberDto> memberSelectList(int start, int end) {
 		// TODO Auto-generated method stub
 		
-		return memberDao.memberSelectList();
+		return memberDao.memberSelectList(start, end);
 	}
 
 	@Override
@@ -52,6 +52,12 @@ public class MemberServiceImpl implements MemberService{
 	public int memberDeleteOne(int no) {
 		// TODO Auto-generated method stub
 		return memberDao.memberDeleteOne(no);
+	}
+
+	@Override
+	public int memberSelectTotalCount() {
+		// TODO Auto-generated method stub
+		return memberDao.memberSelectTotalCount();
 	}
 
 }

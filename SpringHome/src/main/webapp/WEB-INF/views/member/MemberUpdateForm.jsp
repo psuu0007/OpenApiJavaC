@@ -9,10 +9,11 @@
 	
 	<script type="text/javascript">
 		function pageMoveListFnc() {
-			location.href = "./list";
+			location.href = "./list.do";
 		}
 		
 		function pageMoveDeleteFnc(no) {
+			
 			var url = './delete.do?no=' + no;
 			
 			location.href = url;

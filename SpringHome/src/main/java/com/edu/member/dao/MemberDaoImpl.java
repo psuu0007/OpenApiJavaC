@@ -2,6 +2,7 @@ package com.edu.member.dao;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,12 @@ public class MemberDaoImpl implements MemberDao{
 	SqlSessionTemplate sqlSession;
 	
 	@Override
-	public List<MemberDto> memberSelectList() {
-		// TODO Auto-generated method stub
+	public List<MemberDto> memberSelectList(int start, int end) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("start", start);
+		map.put("end", end);
 		
-		return sqlSession.selectList("com.edu.member.memberSelectList");
+		return sqlSession.selectList("com.edu.member.memberSelectList", map);
 	}
 
 	@Override
@@ -59,5 +62,9 @@ public class MemberDaoImpl implements MemberDao{
 		return sqlSession.delete("com.edu.member.memberDeleteOne", no);
 	}
 	
+	@Override
+	public int memberSelectTotalCount() {
+		return (int)sqlSession.selectOne("com.edu.member.memberSelectTotalCount");
+	}
 	
 }
