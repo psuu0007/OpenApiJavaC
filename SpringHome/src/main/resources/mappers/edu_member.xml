@@ -73,5 +73,14 @@
 		SELECT COUNT(*)
 		FROM MEMBER
 	</select>
+	
+	<insert id="insertFile" parameterMap="map">
+		INSERT INTO TB_FILE
+			(IDX, PARENT_SEQ, ORIGINAL_FILE_NAME, STORED_FILE_NAME
+			, FILE_SIZE, CRE_DATE)
+		VALUES
+			(TB_FILE_IDX_SEQ.NEXTVAL, #{parentSeq}, #{original_file_name}, 
+			#{stored_file_name}, #{file_size}, SYSDATE);
+	</insert>
 
 </mapper>
