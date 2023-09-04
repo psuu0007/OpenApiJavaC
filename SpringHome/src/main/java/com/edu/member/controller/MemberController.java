@@ -1,6 +1,8 @@
 package com.edu.member.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -11,9 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.edu.member.dto.MemberDto;
 import com.edu.member.service.MemberService;
+import com.edu.util.Paging;
 
 @Controller
 public class MemberController {
@@ -63,19 +67,27 @@ public class MemberController {
 	}
 	
 	
-	@RequestMapping(value = "/member/list.do", method = RequestMethod.GET)
-	public String memberList(Model model) {
+	@RequestMapping(value = "/member/list.do", 
+		method = {RequestMethod.GET, RequestMethod.POST})
+	public String memberList(@RequestParam(defaultValue = "1") int curPage, Model model) {
 		// Log4j 
-		log.info("Welcome MemberController list!");
+		log.info("Welcome MemberController list!: {}", curPage);
 			
 		int totalCount = memberService.memberSelectTotalCount();
 		
-		int start = 0;
-		int end = 0;
+		Paging memberPaging = new Paging(totalCount, curPage);
+		
+		int start = memberPaging.getPageBegin();
+		int end = memberPaging.getPageEnd();
 		
 		List<MemberDto> memberList = memberService.memberSelectList(start, end);
 		
+		HashMap<String, Object> pagingMap = new HashMap<>();
+		pagingMap.put("totalCount", totalCount);
+		pagingMap.put("memberPaging", memberPaging);
+		
 		model.addAttribute("memberList", memberList);
+		model.addAttribute("pagingMap", pagingMap);
 		
 		return "member/MemberListView";
 	}

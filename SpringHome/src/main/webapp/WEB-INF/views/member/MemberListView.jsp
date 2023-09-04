@@ -20,20 +20,45 @@
 	<p>
 		<a href='./add.do'>신규 회원</a>
 	</p>
-	
 
-	<c:forEach var="memberDto" items="${memberList}">
-
-		${memberDto.no},
-		<a href='./update.do?no=${memberDto.no}'>
-			${memberDto.name}
-		</a>
-		, ${memberDto.email}		
-		, <fmt:formatDate pattern="yyyy-MM-dd hh:mm" value="${memberDto.createDate}"/>
-		<a href='./delete.do?no=${memberDto.no}'>[삭제]</a><br>
+	<table>
+		<tr>
+			<th>번호</th>
+			<th>이름</th>
+			<th>이메일</th>
+			<th>가입일</th>
+			<th></th>
+		</tr>
+		
+		<c:forEach var="memberDto" items="${memberList}">
+		<tr>
+			<td>${memberDto.no}</td>
+			<td>
+				<a href='./update.do?no=${memberDto.no}'>${memberDto.name}</a>
+			</td>
+			<td>${memberDto.email}</td>
+			<td>
+				<fmt:formatDate pattern="yyyy-MM-dd hh:mm" value="${memberDto.createDate}"/>
+			</td>
+			<td>
+				<a href='./delete.do?no=${memberDto.no}'>[삭제]</a>
+			</td>	
+		</tr>
 			
-	</c:forEach>
+		</c:forEach>
+	</table>
+	
+	<jsp:include page="/WEB-INF/views/common/Paging.jsp">
+		<jsp:param value="${pagingMap}" name="pagingMap"/>
+	</jsp:include>
+	
+	<form action="./list.do" id='pagingForm' method="post">
+		<input type="hidden" id='curPage' name='curPage' 
+			value="${pagingMap.memberPaging.curPage}">
+	</form>
 	
 	<jsp:include page="/WEB-INF/views/Tail.jsp"/>
 </body>
 </html>
+
+
