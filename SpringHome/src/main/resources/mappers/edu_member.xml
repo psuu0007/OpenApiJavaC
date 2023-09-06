@@ -41,10 +41,16 @@
 		WHERE EMAIL = #{email} AND PWD = #{pwd}
 	</select>
 	
-	<insert id="memberInsertOne" parameterType="memberDto">
+	<insert id="memberInsertOne" parameterType="memberDto"
+		useGeneratedKeys="true" keyProperty="no">
+		<selectKey keyProperty="no" resultType="int" order="BEFORE">
+			SELECT MEMBERS_MNO_SEQ.NEXTVAL
+			FROM DUAL
+		</selectKey>
+		
 		INSERT INTO MEMBER
-		(MNO, EMAIL, PWD, MNAME, CRE_DATE, MOD_DATE)
-		VALUES(MEMBERS_MNO_SEQ.nextval, #{email}, #{password}, #{name}, SYSDATE, SYSDATE)
+			(MNO, EMAIL, PWD, MNAME, CRE_DATE, MOD_DATE)
+		VALUES(#{no}, #{email}, #{password}, #{name}, SYSDATE, SYSDATE)
 	</insert>
 	
 	<select id="memberSelectOne" parameterType="int"
@@ -74,13 +80,33 @@
 		FROM MEMBER
 	</select>
 	
-	<insert id="insertFile" parameterMap="map">
+	<insert id="insertFile" parameterType="map">
 		INSERT INTO TB_FILE
 			(IDX, PARENT_SEQ, ORIGINAL_FILE_NAME, STORED_FILE_NAME
 			, FILE_SIZE, CRE_DATE)
 		VALUES
 			(TB_FILE_IDX_SEQ.NEXTVAL, #{parentSeq}, #{original_file_name}, 
-			#{stored_file_name}, #{file_size}, SYSDATE);
+			#{stored_file_name}, #{file_size}, SYSDATE)
 	</insert>
 
+	<select id="fileSelectList" parameterType="int" resultType="map">
+		SELECT IDX, ORIGINAL_FILE_NAME, STORED_FILE_NAME
+		    , ROUND(FILE_SIZE/1024, 1) AS FILE_SIZE
+		FROM TB_FILE
+		WHERE PARENT_SEQ = #{no}
+	</select>
+
+
+	<select id="fileSelectStoredFileName" parameterType="int"
+		resultType="map">
+		SELECT IDX, STORED_FILE_NAME
+		FROM TB_FILE
+		WHERE PARENT_SEQ = #{parentSeq}
+	</select>
+	
+	<delete id="fileDelete" parameterType="int">
+		DELETE FROM TB_FILE
+		WHERE PARENT_SEQ = #{no}
+	</delete>
+	
 </mapper>

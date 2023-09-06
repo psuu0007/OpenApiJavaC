@@ -34,7 +34,7 @@
 		<tr>
 			<td>${memberDto.no}</td>
 			<td>
-				<a href='./update.do?no=${memberDto.no}'>${memberDto.name}</a>
+				<a href='./listOne.do?no=${memberDto.no}'>${memberDto.name}</a>
 			</td>
 			<td>${memberDto.email}</td>
 			<td>
